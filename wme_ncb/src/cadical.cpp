@@ -469,14 +469,25 @@ int App::main (int argc, char **argv) {
          !strcmp (argv[i], "--status=false") ||
          !strcmp (argv[i], "--status=0"))
       status = false;
-    else if (!strcmp (argv[i], "--threshold")) {
+    else if (!strcmp(argv[i], "--logthreshold")) {
       if (++i == argc)
-        APPERR ("argument to '--threshold' missing");
-      else{
-        printf("Setting threshold to %s\n", argv[i]);
-        solver->internal->threshold = mpf_class(argv[i]);
-        printf("Threshold set\n");
-      }
+        APPERR("argument to '--logthreshold' missing");
+
+      if (have_threshold)
+        APPERR("options '--threshold' and '--logthreshold' are mutually exclusive");
+
+      solver->internal->threshold = mpf_class(argv[i]);  // linear scale
+      have_logthreshold = true;
+    }
+    else if (!strcmp(argv[i], "--threshold")) {
+      if (++i == argc)
+        APPERR("argument to '--threshold' missing");
+
+      if (have_logthreshold)
+        APPERR("options '--threshold' and '--logthreshold' are mutually exclusive");
+
+      solver->internal->threshold = std::log10(mpf_class(argv[i]).get_d());  // log10 scale
+      have_threshold = true;
     }
     else if (!strcmp (argv[i], "--topk")) {
       if (++i == argc)
