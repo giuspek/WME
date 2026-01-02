@@ -383,6 +383,8 @@ int App::main (int argc, char **argv) {
 #endif
   bool witness = true, less = false, status = true;
   const char *dimacs_name, *err;
+  bool have_threshold = false;
+  bool have_logthreshold = false;
 
   for (int i = 1; i < argc; i++) {
     if (!strcmp (argv[i], "-h") || !strcmp (argv[i], "--help") ||

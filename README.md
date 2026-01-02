@@ -46,26 +46,46 @@ This installs the development headers and static/shared libraries needed for com
 2. **Run on a benchmark**
    - After building, run the produced binary on files from `test/`. (Paths/flags may differ by variant.)
    ```bash
-   ./wme_cb/build/wme_cb <path-to-test-instance>
+   ./wme_cb/build/wme_cb <file.cnf> --weights <file.weights>
    # or
-   ./wme_ncb/build/wme_ncb <path-to-test-instance>
+   ./wme_ncb/build/wme_ncb <file.cnf> --weights <file.weights>
    ```
+
+   Running the tool without a .weights file assumes all variables have 1 as weight, both positive and negative.
+
+   **Other options**
+
+    ```bash
+   --topk <n>: enumerate the best topk models
+   --threshold <r>: enumerate all solutions whose weight is higher than the threshold
+   --logthreshold <r>: enumerate all solution whose weight is higher than the log10 of the threshold
+   ```
+
+   Notice that topk can be combined with the other two options, but threshold and logthreshold cannot be assigned for the same instance.
+
 
 ---
 
 ## Benchmarks
 
-The `test/` folder includes benchmark instances for quick validation and performance checks. Refer to the per-variant README for any flags (e.g., weight files, enumeration limits, verbosity).
+The `test/` folder includes benchmark instances for quick validation and performance checks. In particular:
+
+```
+.
+├── bayes-basic/    # Benchmark on bayesian network WMC encoding with high number of variables and complex structure
+├── bayes-or/    # Benchmark on bayesian network WMC encoding with low number of variables and easier structure
+└── rnd3sat-weights/       # Benchmarks on synthetic random 3SAT problems
+```
 
 ---
 
 ## Citing
 
-If you use WME in academic work, please cite the project (add your preferred citation here).
+If you use WME in academic work, please cite the project:
 
 
 ---
 
 ## Contact
 
-For questions or issues, please open a GitHub issue or contact the maintainer at gs81 <at> rice <dot> edu.
+For questions or issues, please open a GitHub issue or contact the maintainer at gs81 [at] rice [dot] edu.
