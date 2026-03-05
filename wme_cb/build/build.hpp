@@ -1,0 +1,6 @@
+#define VERSION "2.1.3"
+#define IDENTIFIER "b38accb5cc4a1dd14feeb4155258c8e2c40224ad"
+#define SHORTID "b38accb"
+#define COMPILER "g++ (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0"
+#define FLAGS "-Wall -Wextra -O3 -DNDEBUG"
+#define DATE "Wed Mar 4 18:29:10 CST 2026 Linux DESKTOP-RA97VIK 4.4.0-26100-Microsoft x86_64"

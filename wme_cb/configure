@@ -606,4 +606,3 @@ ln -s $root/makefile $src/makefile
 #--------------------------------------------------------------------------#
 
 msg "now run ${HILITE}'make'${NORMAL} to compile CaDiCaL"
-msg "optionally run 'make test'"

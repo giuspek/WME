@@ -1,5 +1,5 @@
 #==========================================================================#
-# This is a 'makefile.in' template with '@CXX@' and '@CXXFLAGS@' parameters.
+# This 'makefile' is generated from '../makefile.in'.
 # This makefile requires GNU make.
 #==========================================================================#
 
@@ -7,12 +7,12 @@
 # lines to figure out the compiler and compilation flags.  This information
 # is then used to generate corresponding macros in 'build.hpp'.
 
-CXX=@CXX@
-CXXFLAGS=@CXXFLAGS@
+CXX=g++
+CXXFLAGS=-Wall -Wextra -O3 -DNDEBUG
 
-LIBS=@LIBS@
-CONTRIB=@CONTRIB@
-IPASIR=@IPASIR@
+LIBS=-lgmpxx -lgmp
+CONTRIB=yes
+IPASIR=yes
 
 ############################################################################
 #    It is usually not necessary to change anything below this line!       #
@@ -53,7 +53,7 @@ all: libcadical.a cadical mobical
 # tester 'mobical') and the library are the main build targets.
 
 cadical: cadical.o libcadical.a makefile
-	$(COMPILE) -o wme_ncb $< -L. -lcadical $(LIBS)
+	$(COMPILE) -o wme_cb $< -L. -lcadical $(LIBS)
 
 mobical: mobical.o libcadical.a makefile $(LIBS)
 	$(COMPILE) -o $@ $< -L. -lcadical $(LIBS)
