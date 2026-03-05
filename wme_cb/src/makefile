@@ -1,1 +1,0 @@
-/mnt/c/Users/giuse/Desktop/RICE/SAT2026/WME/wme_cb/makefile

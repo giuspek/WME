@@ -605,4 +605,4 @@ ln -s $root/makefile $src/makefile
 
 #--------------------------------------------------------------------------#
 
-msg "now run ${HILITE}'make'${NORMAL} to compile CaDiCaL"
+msg "now run ${HILITE}'make'${NORMAL} to compile WME_CB"
