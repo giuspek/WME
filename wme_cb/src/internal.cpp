@@ -432,7 +432,7 @@ for (int idx = 1; idx <= max_var; idx++) {
           res = (num_models > 0) ? 10 : 20;
           break;
         }
-        if (topk > 0 && topk_solver) {
+        if (topk > 0 && topk_solver && topk_solver->heap.size() == topk) {
           weight_pruning(); // Prune the last decision path
         }
         block_last_decision_path(); // Block the last decision path
