@@ -32,27 +32,6 @@ This installs the development headers and static/shared libraries needed for com
    - See `wme_cb/README.md` for CB build steps.
    - See `wme_ncb/README.md` for NCB build steps.
 
-2. **Run on a benchmark**
-   - After building, run the produced binary on files from `test/`. (Paths/flags may differ by variant.)
-   ```bash
-   ./wme_cb/build/wme_cb <file.cnf> --weights <file.weights>
-   # or
-   ./wme_ncb/build/wme_ncb <file.cnf> --weights <file.weights>
-   ```
-
-   Running the tool without a .weights file assumes all variables have 1 as weight, both positive and negative.
-
-   **Other options**
-
-    ```bash
-   --topk <n>: enumerate the best topk models
-   --threshold <r>: enumerate all solutions whose weight is higher than the threshold
-   --logthreshold <r>: enumerate all solution whose weight is higher than the log10 of the threshold
-   ```
-
-   Notice that topk can be combined with the other two options, but threshold and logthreshold cannot be assigned for the same instance.
-
-
 ---
 
 ## Benchmarks
@@ -63,7 +42,8 @@ The `test/` folder includes benchmark instances for quick validation and perform
 .
 ├── bayes-basic/    # Benchmark on bayesian network WMC encoding with high number of variables and complex structure
 ├── bayes-or/    # Benchmark on bayesian network WMC encoding with low number of variables and easier structure
-└── rnd3sat-weights/       # Benchmarks on synthetic random 3SAT problems
+├── uf200-860/     # Benchmark on SATLIB problems with ratio clauses-to-variables 4.28
+└── rnd3sat-1.5/       # Benchmarks on synthetic random 3SAT problems with ratio clauses-to-variables 1.5
 ```
 
 ---
