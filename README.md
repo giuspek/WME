@@ -10,17 +10,6 @@ WME is a SAT-based framework for **Weighted Model Enumeration** with two solver 
 
 ---
 
-## Directory Layout
-
-```
-.
-├── wme_cb/     # WME with chronological backtracking (CB)
-├── wme_ncb/    # WME with non-chronological backtracking (NCB)
-└── test/       # Benchmarks and example inputs
-```
-
----
-
 ## Requirements
 
 Both variants require:
