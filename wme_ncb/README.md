@@ -241,26 +241,6 @@ Use this when you want to enumerate only solutions whose score is above a given 
   - `--topk`
   - `--threshold` or `--logthreshold`
 
-## Minimal examples
-
-### Example A: top-10 weighted models
-
-```bash
-build/wme_ncb --weights weights.txt --topk 10 formula.cnf
-```
-
-### Example B: threshold-based enumeration
-
-```bash
-build/wme_ncb --weights weights.txt --logthreshold -5 formula.cnf
-```
-
-### Example C: unweighted enumeration
-
-```bash
-build/wme_ncb formula.cnf
-```
-
 ## Citation
 
 If you use this code in academic work, please cite the accompanying WME paper.
