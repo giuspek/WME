@@ -655,6 +655,17 @@ int App::main (int argc, char **argv) {
 #ifndef QUIET
   if (!get ("quiet")) {
     solver->section ("banner");
+    solver->message ("%sWME - Chronological version%s",
+                     tout.bright_magenta_code (), tout.normal_code ());
+    solver->message ("%sG. Spallitta, M. Y. Vardi%s",
+                     tout.bright_magenta_code (), tout.normal_code ());
+    solver->message ("%sRice University%s", tout.bright_magenta_code (),
+                     tout.normal_code ());
+    solver->message ("%sv 1.0%s", tout.bright_magenta_code (),
+                     tout.normal_code ());
+    solver->message ();
+    solver->message ("%sBuilt on top of CaDiCaL%s",
+                     tout.bright_magenta_code (), tout.normal_code ());
     solver->message ("%sCaDiCaL SAT Solver%s", tout.bright_magenta_code (),
                      tout.normal_code ());
     solver->message ("%s%s%s", tout.bright_magenta_code (), copyright (),

@@ -110,31 +110,31 @@ def sorted_by_weight(models):
     return sorted(models, key=lambda model: (model.weight, model.assignment), reverse=True)
 
 
-def assert_same_models(left, right, label):
-    left_map = model_map(left, label + " left")
-    right_map = model_map(right, label + " right")
+def assert_same_models(left, right, label, left_label="left", right_label="right"):
+    left_map = model_map(left, label + " " + left_label)
+    right_map = model_map(right, label + " " + right_label)
     if left_map != right_map:
         raise AssertionError(
             f"{label}: model sets differ\n"
-            f"left={sorted(left_map.items())}\n"
-            f"right={sorted(right_map.items())}")
+            f"{left_label}={sorted(left_map.items())}\n"
+            f"{right_label}={sorted(right_map.items())}")
 
 
-def assert_same_weight_profile(left, right, label):
+def assert_same_weight_profile(left, right, label, left_label="left", right_label="right"):
     left_weights = sorted([model.weight for model in left], reverse=True)
     right_weights = sorted([model.weight for model in right], reverse=True)
     if len(left_weights) != len(right_weights):
         raise AssertionError(
             f"{label}: top-k weight profile lengths differ\n"
-            f"left={left_weights}\n"
-            f"right={right_weights}")
+            f"{left_label}={left_weights}\n"
+            f"{right_label}={right_weights}")
     for idx, (left_weight, right_weight) in enumerate(zip(left_weights, right_weights), 1):
         if weights_close(left_weight, right_weight):
             continue
         raise AssertionError(
             f"{label}: top-k weight profiles differ at rank {idx}\n"
-            f"left={left_weights}\n"
-            f"right={right_weights}")
+            f"{left_label}={left_weights}\n"
+            f"{right_label}={right_weights}")
 
 
 def weights_close(left, right):
@@ -179,7 +179,7 @@ def assert_topk_matches_full(full, topk, k, label):
 def assert_threshold_matches_full(full, thresholded, threshold, label):
     threshold = Decimal(threshold)
     expected = [model for model in full if model.weight >= threshold]
-    assert_same_models(expected, thresholded, label)
+    assert_same_models(expected, thresholded, label, "expected", "solver")
 
 
 def weights_args(name):
@@ -193,6 +193,11 @@ def benchmark_weights_args(directory, stem):
 
 def benchmark_cnf_args(directory, filename):
     return [str(BENCHMARKS / directory / filename)]
+
+
+def benchmark_explicit_weights_args(directory, cnf_filename, weights_filename):
+    root = BENCHMARKS / directory
+    return ["--weights", str(root / weights_filename), str(root / cnf_filename)]
 
 
 def wcnf_args(name):
@@ -217,14 +222,16 @@ def test_topk_against_full(modes, name, k):
         topk = run_solver(mode, ["--topk", str(k)] + weights_args(name))
         assert_topk_matches_full(full, topk, k, f"{name} {mode.name}")
         topk_by_mode[mode.name] = topk
-    assert_same_models(topk_by_mode["NCB"], topk_by_mode["CB"], f"{name} CB vs NCB top-k")
+    assert_same_models(topk_by_mode["NCB"], topk_by_mode["CB"],
+                       f"{name} CB vs NCB top-k", "NCB", "CB")
 
 
 def test_wcnf_equivalence(modes, name, k):
     for mode in modes:
         split = run_solver(mode, ["--topk", str(k)] + weights_args(name))
         embedded = run_solver(mode, ["--topk", str(k)] + wcnf_args(name))
-        assert_same_models(split, embedded, f"{name} {mode.name} --weights vs --wcnf")
+        assert_same_models(split, embedded, f"{name} {mode.name} --weights vs --wcnf",
+                           "--weights", "--wcnf")
 
 
 def test_threshold_equivalence(mode, name, threshold):
@@ -233,7 +240,8 @@ def test_threshold_equivalence(mode, name, threshold):
     linear = run_solver(mode, ["--threshold", threshold] + weights_args(name))
     logged = run_solver(mode, ["--logthreshold", log_threshold] + weights_args(name))
     assert_threshold_matches_full(full, linear, threshold, f"{name} {mode.name} threshold vs full enum")
-    assert_same_models(linear, logged, f"{name} {mode.name} threshold vs logthreshold")
+    assert_same_models(linear, logged, f"{name} {mode.name} threshold vs logthreshold",
+                       "--threshold", "--logthreshold")
 
 
 def test_invalid_inputs(modes, have_wcnf):
@@ -261,7 +269,7 @@ def test_benchmark_cb_ncb_topk(modes, label, args, k):
     cb = run_solver(modes[1], ["--topk", str(k)] + args)
     assert_model_count(ncb, k, label + " NCB")
     assert_model_count(cb, k, label + " CB")
-    assert_same_weight_profile(ncb, cb, label + " CB vs NCB")
+    assert_same_weight_profile(ncb, cb, label + " CB vs NCB", "NCB", "CB")
 
 
 def build_modes(paths):
@@ -328,7 +336,10 @@ def main():
         ("benchmark rnd3sat-1.5/rnd3sat-w-25-0: CB vs NCB top-k",
          lambda: test_benchmark_cb_ncb_topk(
              modes, "rnd3sat-1.5/rnd3sat-w-25-0",
-             benchmark_cnf_args("rnd3sat-1.5", "rnd3sat-w-25-0.cnf"), 5)),
+             benchmark_explicit_weights_args(
+                 "rnd3sat-1.5",
+                 "rnd3sat-w-25-0.cnf",
+                 "weights-rnd3sat-w-25-0-0.weights"), 5)),
         ("benchmark uf200-860/uf200-01: CB vs NCB top-k",
          lambda: test_benchmark_cb_ncb_topk(
              modes, "uf200-860/uf200-01",

@@ -1256,30 +1256,9 @@ void Solver::build (FILE *file, const char *prefix) {
   else
     terminal = 0;
 
-  const char *v = CaDiCaL::version ();
-  const char *i = identifier ();
   const char *c = compiler ();
   const char *b = date ();
   const char *f = flags ();
-
-  assert (v);
-
-  fputs (prefix, file);
-  if (terminal)
-    terminal->magenta ();
-  fputs ("Version ", file);
-  if (terminal)
-    terminal->normal ();
-  fputs (v, file);
-  if (i) {
-    if (terminal)
-      terminal->magenta ();
-    fputc (' ', file);
-    fputs (i, file);
-    if (terminal)
-      terminal->normal ();
-  }
-  fputc ('\n', file);
 
   if (c) {
     fputs (prefix, file);
