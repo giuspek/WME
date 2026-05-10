@@ -452,6 +452,7 @@ struct TopK {
   void block_last_decision_path();
   void weight_pruning();
   void weight_pruning_conflict();
+  void rebuild_weight_state_from_trail();
   void unassign_score(int lit);
   void assign_score(int lit);
   bool check_weight_conflict();

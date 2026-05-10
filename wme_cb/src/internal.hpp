@@ -1369,6 +1369,7 @@ struct TopK {
   void block_last_decision_path();
   void weight_pruning();
   void weight_pruning_conflict();
+  void rebuild_weight_state_from_trail();
   void learn_blocking_clause(int forced_lit);
 
   int already_solved ();

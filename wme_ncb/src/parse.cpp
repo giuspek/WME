@@ -103,6 +103,16 @@ const char *Parser::parse_weights_file() {
   int ch;
   auto &weights_map = internal->weights_map;
   weights_map.clear();
+  internal->sorted_lits.clear();
+  internal->is_relevant.clear();
+  internal->weight_assignment = mpf_class(1.0);
+  internal->log_weight_assignment = mpf_class(0.0);
+  internal->best_weight_residual = mpf_class(1.0);
+  internal->log_best_weight_residual = mpf_class(0.0);
+  internal->init_best_weight_residual = mpf_class(1.0);
+  internal->log_init_best_weight_residual = mpf_class(0.0);
+  internal->weight_assignment_relevant = mpf_class(1.0);
+  internal->log_weight_assignment_relevant = mpf_class(0.0);
 
   int max_var = 0;
 
@@ -151,6 +161,8 @@ const char *Parser::parse_weights_file() {
     while (ch != '\n' && ch != EOF) ch = parse_char();
 
     mpf_class weight = mpf_class(weight_str);
+    if (weight <= 0)
+      PER("expected positive weight for literal %d", lit);
     weights_map[lit] = weight;
     update_heuristics(weight.get_d());
     if (abs(lit) > max_var)

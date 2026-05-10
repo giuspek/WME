@@ -200,6 +200,7 @@ bool Internal::check_weight_conflict() {
   // This is a placeholder for the actual conflict checking logic.
   // It should return true if a conflict is detected based on the current
   // weight assignment and the trail.
+  // printf("PROVAAA!\n");
 
   if(internal->threshold >= 0) {
     // If threshold is not set, we do not check for conflicts.
@@ -230,6 +231,7 @@ void Internal::search_assign_external (int lit) {
 void Internal::assign_score(int lit){
   if (weight_environment){
     weight_assignment *= weights_map[lit];
+    log_weight_assignment += std::log10(weights_map[lit].get_d());
     if (is_relevant.find(abs(lit)) != is_relevant.end()) {
       weight_assignment_relevant *= weights_map[lit];
       log_weight_assignment_relevant += std::log10(weights_map[lit].get_d());
@@ -242,6 +244,7 @@ void Internal::assign_score(int lit){
 void Internal::unassign_score(int lit){
   if (weight_environment){
     weight_assignment /= weights_map[lit];
+    log_weight_assignment -= std::log10(weights_map[lit].get_d());
     if (is_relevant.find(abs(lit)) != is_relevant.end()) {
       weight_assignment_relevant /= weights_map[lit];
       log_weight_assignment_relevant -= std::log10(weights_map[lit].get_d());

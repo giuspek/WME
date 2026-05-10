@@ -123,6 +123,7 @@ void Internal::backtrue_flip (int lit) {
 void Internal::assign_score(int lit){
   if (weight_environment){
     weight_assignment *= weights_map[lit];
+    log_weight_assignment += std::log10(weights_map[lit].get_d());
     if (is_relevant.find(abs(lit)) != is_relevant.end()) {
       weight_assignment_relevant *= weights_map[lit];
       log_weight_assignment_relevant += std::log10(weights_map[lit].get_d());
@@ -135,6 +136,7 @@ void Internal::assign_score(int lit){
 void Internal::unassign_score(int lit){
   if (weight_environment){
     weight_assignment /= weights_map[lit];
+    log_weight_assignment -= std::log10(weights_map[lit].get_d());
     if (is_relevant.find(abs(lit)) != is_relevant.end()) {
       weight_assignment_relevant /= weights_map[lit];
       log_weight_assignment_relevant -= std::log10(weights_map[lit].get_d());

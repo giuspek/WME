@@ -263,6 +263,78 @@ void Internal::weight_pruning(){
   backtrack(second_not_relevant_level);
 }
 
+void Internal::rebuild_weight_state_from_trail() {
+  weight_assignment = mpf_class(1.0);
+  log_weight_assignment = mpf_class(0.0);
+  weight_assignment_relevant = mpf_class(1.0);
+  log_weight_assignment_relevant = mpf_class(0.0);
+  best_weight_residual = init_best_weight_residual;
+  log_best_weight_residual = log_init_best_weight_residual;
+
+  for (const auto &lit : trail) {
+    weight_assignment *= weights_map[lit];
+    log_weight_assignment += std::log10(weights_map[lit].get_d());
+    if (is_relevant.find(abs(lit)) != is_relevant.end()) {
+      weight_assignment_relevant *= weights_map[lit];
+      log_weight_assignment_relevant += std::log10(weights_map[lit].get_d());
+      mpf_class best = std::max(weights_map[lit], weights_map[-lit]);
+      best_weight_residual /= best;
+      log_best_weight_residual -= std::log10(best.get_d());
+    }
+  }
+}
+
+
+// void Internal::block_last_decision_path() {
+//   LOG("Generating blocking clause from decisions");
+
+//   // vector<int> blocking;
+//   int flipped_lit = -control[level].decision;
+
+//   if (level == 0) {
+//     // If we are at the root level, we can just return
+//     learn_empty_clause ();
+//     return;
+//   }
+
+//   clause.clear();
+
+//   if (level < is_relevant.size()){
+//     for (int lvl = level; lvl >= 1; --lvl) {
+//       int decision_lit = control[lvl].decision;
+//       clause.push_back(-decision_lit);
+//     }
+//   }else{
+//     // Add all important variables to the blocking clause
+//     for (int i = 1; i <= max_var; ++i) {
+//       if (is_relevant.find(i) != is_relevant.end()) {
+//         int decision_lit = i;
+//         if (val(decision_lit) == 1) {
+//           clause.push_back(-decision_lit);
+//         } else if (val(-decision_lit) == 1) {
+//           clause.push_back(decision_lit);
+//         }
+//       }
+//     }
+//   }
+
+//   if (clause.size() == 1) {
+//     backtrack(0);
+//     // If the blocking clause is a unit clause, we can just assign it
+//     assign_unit(clause[0]);
+//     return;
+//   }
+
+//   Clause *blocking = new_clause(false, 0);
+//   watch_clause (blocking);
+
+//   // Backtrack to previous level
+//   backtrack(level - 1);
+
+//   search_assign_driving(flipped_lit, blocking);
+
+//   clause.clear();
+// }
 
 void Internal::block_last_decision_path() {
   LOG("Generating blocking clause from decisions");
@@ -278,23 +350,9 @@ void Internal::block_last_decision_path() {
 
   clause.clear();
 
-  if (level < is_relevant.size()){
-    for (int lvl = level; lvl >= 1; --lvl) {
-      int decision_lit = control[lvl].decision;
-      clause.push_back(-decision_lit);
-    }
-  }else{
-    // Add all important variables to the blocking clause
-    for (int i = 1; i <= max_var; ++i) {
-      if (is_relevant.find(i) != is_relevant.end()) {
-        int decision_lit = i;
-        if (val(decision_lit) == 1) {
-          clause.push_back(-decision_lit);
-        } else if (val(-decision_lit) == 1) {
-          clause.push_back(decision_lit);
-        }
-      }
-    }
+  for (int lvl = level; lvl >= 1; --lvl) {
+    int decision_lit = control[lvl].decision;
+    clause.push_back(-decision_lit);
   }
 
   if (clause.size() == 1) {
@@ -360,6 +418,7 @@ void Internal::print_current_model() {
   }
   printf("[%.16Lf] ", log_sum);
   gmp_printf("/%.16Lf/\n", log_weight_assignment);
+  // getchar();
 }
 
 /*------------------------------------------------------------------------*/
@@ -412,18 +471,22 @@ int Internal::cdcl_loop_with_inprocessing () {
           analyze ();
       } else if (satisfied ()){
         num_models++;
+        bool can_harsh_prune;
         if (topk > 0 && topk_solver) {
           mpf_class insertion = topk_solver->tryAdd(weight_assignment, log_weight_assignment_relevant, trail);
           if (insertion != 0) {
             threshold = insertion;
           }
+
+          can_harsh_prune = topk > 0 && topk_solver && topk_solver->heap.size() == topk && log_weight_assignment_relevant <= threshold;
+          // can_harsh_prune = true;
         }
         print_current_model(); // Print the current model
         if (!level){
           res = 20;
           break;
         }
-        if (topk > 0 && topk_solver && topk_solver->heap.size() == topk) {
+        if (topk > 0 && topk_solver && can_harsh_prune) {
           weight_pruning(); // Prune the last decision path
         }
         block_last_decision_path();

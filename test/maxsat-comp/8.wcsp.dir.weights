@@ -1,0 +1,45 @@
+c weights converted from 8.wcsp.dir.wcnf
+c unit-soft MaxSAT to WME conversion
+c soft clause (cost lit 0) gives weight exp(-cost/max_soft) to -lit
+c max_soft 2
+c objective equivalence: maximizing product of weights equals minimizing MaxSAT cost
+1 1
+-1 1
+2 1
+-2 1
+3 1
+-3 1
+4 0.60653065971263342
+-4 1
+5 1
+-5 1
+6 1
+-6 1
+7 1
+-7 1
+8 0.60653065971263342
+-8 1
+9 1
+-9 1
+10 1
+-10 1
+11 1
+-11 1
+12 0.60653065971263342
+-12 1
+13 1
+-13 1
+14 1
+-14 1
+15 1
+-15 1
+16 0.60653065971263342
+-16 1
+17 0.36787944117144233
+-17 1
+18 0.36787944117144233
+-18 1
+19 0.36787944117144233
+-19 1
+20 0.36787944117144233
+-20 1

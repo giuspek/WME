@@ -337,6 +337,7 @@ void Internal::assign_original_unit (uint64_t id, int lit) {
   set_val (idx, tmp);
   trail.push_back (lit);
   num_assigned++;
+  assign_score (lit);
   const unsigned uidx = vlit (lit);
   if (lrat || frat)
     unit_clauses (uidx) = id;

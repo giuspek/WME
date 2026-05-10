@@ -429,7 +429,10 @@ const char *Solver::read_weights(const char *path) {
     return internal->error_message.init("failed to read weights file '%s'", path);
   Parser *parser = new Parser(this, file, nullptr, nullptr);
   const char *err = parser->parse_weights_file();
-  internal->weight_environment = true;
+  if (!err) {
+    internal->weight_environment = true;
+    internal->rebuild_weight_state_from_trail();
+  }
   delete parser;
   delete file;
   LOG_API_CALL_RETURNS("read_weights", path, err);

@@ -552,9 +552,9 @@ void Internal::print_resource_usage () {
 #ifndef QUIET
   SECTION ("resources");
   uint64_t m = maximum_resident_set_size ();
-  MSG ("total process time since initialization: %12.2f    seconds",
+  MSG ("total process time since initialization: %12.12f    seconds",
        internal->process_time ());
-  MSG ("total real time since initialization:    %12.2f    seconds",
+  MSG ("total real time since initialization:    %12.12f    seconds",
        internal->real_time ());
   MSG ("maximum resident set size of process:    %12.2f    MB",
        m / (double) (1l << 20));

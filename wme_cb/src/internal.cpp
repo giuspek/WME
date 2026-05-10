@@ -261,7 +261,6 @@ void Internal::reserve_ids (int number) {
 void Internal::print_current_model() {
   if (topk != 0)
     return;
-  return;
   for (size_t i = 0; i < trail.size(); ++i) {
     int lit = trail[i];
     if (std::find_if(control.begin(), control.end(), [&](const Level &lvl) { return lvl.decision == lit; }) != control.end()) {
@@ -316,6 +315,27 @@ void Internal::weight_pruning(){
   }
 
   backtrack(second_not_relevant_level + 1);
+}
+
+void Internal::rebuild_weight_state_from_trail() {
+  weight_assignment = mpf_class(1.0);
+  log_weight_assignment = mpf_class(0.0);
+  weight_assignment_relevant = mpf_class(1.0);
+  log_weight_assignment_relevant = mpf_class(0.0);
+  best_weight_residual = init_best_weight_residual;
+  log_best_weight_residual = log_init_best_weight_residual;
+
+  for (const auto &lit : trail) {
+    weight_assignment *= weights_map[lit];
+    log_weight_assignment += std::log10(weights_map[lit].get_d());
+    if (is_relevant.find(abs(lit)) != is_relevant.end()) {
+      weight_assignment_relevant *= weights_map[lit];
+      log_weight_assignment_relevant += std::log10(weights_map[lit].get_d());
+      mpf_class best = std::max(weights_map[lit], weights_map[-lit]);
+      best_weight_residual /= best;
+      log_best_weight_residual -= std::log10(best.get_d());
+    }
+  }
 }
 
 void Internal::weight_pruning_conflict(){
@@ -421,18 +441,21 @@ for (int idx = 1; idx <= max_var; idx++) {
           analyze ();
       } else if (satisfied ()){
         num_models++;
+        bool can_harsh_prune = false;
         if (topk > 0 && topk_solver) {
           mpf_class insertion = topk_solver->tryAdd(weight_assignment, log_weight_assignment_relevant, trail);
           if (insertion != 0) {
             threshold = insertion;
           }
+          can_harsh_prune = topk_solver->heap.size() == topk &&
+                             log_weight_assignment_relevant <= threshold;
         }
         print_current_model(); // Print the current model
         if (!level){
           res = (num_models > 0) ? 10 : 20;
           break;
         }
-        if (topk > 0 && topk_solver && topk_solver->heap.size() == topk) {
+        if (topk > 0 && topk_solver && can_harsh_prune) {
           weight_pruning(); // Prune the last decision path
         }
         block_last_decision_path(); // Block the last decision path

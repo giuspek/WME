@@ -124,7 +124,7 @@ Report::Report (const char *h, int precision, int min, double value)
 
 #define REPORTS \
   /*     HEADER, PRECISION, MIN, VALUE */ \
-  REPORT ("seconds", 2, 5, TIME) \
+  REPORT ("seconds", 16, 5, TIME) \
   REPORT ("MB", 0, 2, MB) \
   REPORT ("level", 0, 2, averages.current.level) \
   REPORT ("reductions", 0, 1, stats.reductions) \

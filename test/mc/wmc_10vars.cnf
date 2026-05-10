@@ -1,0 +1,33 @@
+c t wmc
+c file wmc_10vars.cnf
+c Example weighted-CNF smoke test for WME --wcnf.
+c All literal weights are strictly in (0,1).
+p cnf 10 8
+c p weight 1 0.732914 0
+c p weight -1 0.267086 0
+c p weight 2 0.418527 0
+c p weight -2 0.581473 0
+c p weight 3 0.905341 0
+c p weight -3 0.094659 0
+c p weight 4 0.156782 0
+c p weight -4 0.843218 0
+c p weight 5 0.649203 0
+c p weight -5 0.350797 0
+c p weight 6 0.287614 0
+c p weight -6 0.712386 0
+c p weight 7 0.811936 0
+c p weight -7 0.188064 0
+c p weight 8 0.472105 0
+c p weight -8 0.527895 0
+c p weight 9 0.063428 0
+c p weight -9 0.936572 0
+c p weight 10 0.594817 0
+c p weight -10 0.405183 0
+1 -2 3 0
+-1 4 0
+2 -5 6 0
+-3 -6 7 0
+5 8 -9 0
+-4 -7 10 0
+9 -10 0
+-8 3 0

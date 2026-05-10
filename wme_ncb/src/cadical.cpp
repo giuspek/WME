@@ -779,6 +779,8 @@ int App::main (int argc, char **argv) {
   if (err)
     APPERR ("%s", err);
 
+  solver->internal->rebuild_weight_state_from_trail();
+
   if (read_solution_path) {
     solver->section ("parsing solution");
     solver->message ("reading solution file from '%s'", read_solution_path);
