@@ -227,14 +227,13 @@ def test_wcnf_equivalence(modes, name, k):
         assert_same_models(split, embedded, f"{name} {mode.name} --weights vs --wcnf")
 
 
-def test_threshold_equivalence(modes, name, threshold):
+def test_threshold_equivalence(mode, name, threshold):
     log_threshold = f"{math.log10(float(threshold)):.17g}"
-    for mode in modes:
-        full = run_solver(mode, weights_args(name))
-        linear = run_solver(mode, ["--threshold", threshold] + weights_args(name))
-        logged = run_solver(mode, ["--logthreshold", log_threshold] + weights_args(name))
-        assert_threshold_matches_full(full, linear, threshold, f"{name} {mode.name} threshold vs full enum")
-        assert_same_models(linear, logged, f"{name} {mode.name} threshold vs logthreshold")
+    full = run_solver(mode, weights_args(name))
+    linear = run_solver(mode, ["--threshold", threshold] + weights_args(name))
+    logged = run_solver(mode, ["--logthreshold", log_threshold] + weights_args(name))
+    assert_threshold_matches_full(full, linear, threshold, f"{name} {mode.name} threshold vs full enum")
+    assert_same_models(linear, logged, f"{name} {mode.name} threshold vs logthreshold")
 
 
 def test_invalid_inputs(modes, have_wcnf):
@@ -292,6 +291,8 @@ def main():
         if not mode.binary.exists():
             print(f"missing WME binary: {mode.binary}", file=sys.stderr)
             return 1
+    ncb_mode = next(mode for mode in modes if mode.name == "NCB")
+    cb_mode = next(mode for mode in modes if mode.name == "CB")
 
     have_wcnf = all(supports_option(mode, "--wcnf") for mode in modes)
 
@@ -302,10 +303,14 @@ def main():
          lambda: test_topk_against_full(modes, "unit_before_weights", 2)),
         ("relevant_irrelevant: full enum vs top-k, CB/NCB",
          lambda: test_topk_against_full(modes, "relevant_irrelevant", 4)),
-        ("topk_basic: --threshold vs --logthreshold",
-         lambda: test_threshold_equivalence(modes, "topk_basic", "0.1")),
-        ("relevant_irrelevant: --threshold vs --logthreshold",
-         lambda: test_threshold_equivalence(modes, "relevant_irrelevant", "0.08")),
+        ("topk_basic NCB: --threshold vs --logthreshold",
+         lambda: test_threshold_equivalence(ncb_mode, "topk_basic", "0.1")),
+        ("topk_basic CB: --threshold vs --logthreshold",
+         lambda: test_threshold_equivalence(cb_mode, "topk_basic", "0.1")),
+        ("relevant_irrelevant NCB: --threshold vs --logthreshold",
+         lambda: test_threshold_equivalence(ncb_mode, "relevant_irrelevant", "0.08")),
+        ("relevant_irrelevant CB: --threshold vs --logthreshold",
+         lambda: test_threshold_equivalence(cb_mode, "relevant_irrelevant", "0.08")),
         ("invalid inputs are rejected",
          lambda: test_invalid_inputs(modes, have_wcnf)),
         ("benchmark bayes-basic/50-10-1-q: CB vs NCB top-k",

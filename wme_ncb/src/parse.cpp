@@ -113,6 +113,7 @@ const char *Parser::parse_weights_file() {
   internal->log_init_best_weight_residual = mpf_class(0.0);
   internal->weight_assignment_relevant = mpf_class(1.0);
   internal->log_weight_assignment_relevant = mpf_class(0.0);
+  mpf_class log_irrelevant_weight_constant = mpf_class(0.0);
 
   int max_var = 0;
 
@@ -183,8 +184,13 @@ const char *Parser::parse_weights_file() {
       internal->log_best_weight_residual += std::log10(neg_it.get_d());
       internal->best_weight_residual *= neg_it;
       internal->is_relevant.insert(var); // Mark variable as relevant
-    } 
+    } else if (pos_it > 0) {
+      log_irrelevant_weight_constant += std::log10(pos_it.get_d());
+    }
   }
+
+  if (internal->threshold < 0)
+    internal->threshold -= log_irrelevant_weight_constant;
 
   internal->init_best_weight_residual = internal->best_weight_residual;
   internal->log_init_best_weight_residual = internal->log_best_weight_residual;
