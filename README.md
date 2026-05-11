@@ -2,11 +2,11 @@
 
 WME is a SAT-based framework for **Weighted Model Enumeration** with two solver variants and a benchmark suite.
 
-- **`wme_cb/`** — Chronological backtracking version.
-- **`wme_ncb/`** — Non-chronological backtracking version.
-- **`test/`** — Benchmarks and example instances.
+- **`wme_cb/`** - Chronological backtracking version.
+- **`wme_ncb/`** - Non-chronological backtracking version.
+- **`test/`** - Benchmarks, regression tests, and example instances.
 
-> **Build note:** To compile each variant, **follow the instructions inside** the corresponding directory (`wme_cb/` and `wme_ncb/`). Each folder contains its own build steps and dependencies.
+> **Build note:** WME can now be built from the repository root. The top-level `makefile` configures and builds both solver variants.
 
 ---
 
@@ -22,15 +22,36 @@ sudo apt update
 sudo apt install -y libgmp-dev
 ```
 
-This installs the development headers and static/shared libraries needed for compilation. Once installed, proceed with the build steps provided in each variant’s README (`wme_cb/README.md`, `wme_ncb/README.md`).
+This installs the development headers and static/shared libraries needed for compilation.
 
 ---
 
 ## Quick Start
 
-1. **Build a solver variant**
-   - See `wme_cb/README.md` for CB build steps.
-   - See `wme_ncb/README.md` for NCB build steps.
+Build both solver variants from the repository root:
+
+```bash
+make
+```
+
+Build only one variant:
+
+```bash
+make cb
+make ncb
+```
+
+Run the integration tests:
+
+```bash
+make test
+```
+
+Clean generated build files:
+
+```bash
+make clean
+```
 
 ---
 
@@ -38,12 +59,12 @@ This installs the development headers and static/shared libraries needed for com
 
 The `test/` folder includes benchmark instances for quick validation and performance checks. In particular:
 
-```
+```text
 .
-├── bayes-basic/    # Benchmark on bayesian network WMC encoding with high number of variables and complex structure
-├── bayes-or/    # Benchmark on bayesian network WMC encoding with low number of variables and easier structure
-├── uf200-860/     # Benchmark on SATLIB problems with ratio clauses-to-variables 4.28
-└── rnd3sat-1.5/       # Benchmarks on synthetic random 3SAT problems with ratio clauses-to-variables 1.5
+|-- bayes-basic/    # Bayesian-network WMC encodings with many variables
+|-- bayes-or/       # Easier Bayesian-network WMC encodings
+|-- uf200-860/      # SATLIB problems with clause/variable ratio 4.28
+`-- rnd3sat-1.5/    # Synthetic random 3SAT benchmarks
 ```
 
 ---
